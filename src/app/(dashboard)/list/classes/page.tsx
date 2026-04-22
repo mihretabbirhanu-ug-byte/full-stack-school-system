@@ -98,7 +98,7 @@ const renderRow = (item: ClassList) => (
     }
   }
 
-  const [data, count] = await prisma.$transaction([
+  const [data, count] = await Promise.all([
     prisma.class.findMany({
       where: query,
       include: {

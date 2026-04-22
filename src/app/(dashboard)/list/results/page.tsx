@@ -152,7 +152,7 @@ const renderRow = (item: ResultList) => (
       break;
   }
 
-  const [dataRes, count] = await prisma.$transaction([
+  const [dataRes, count] = await Promise.all([
     prisma.result.findMany({
       where: query,
       include: {

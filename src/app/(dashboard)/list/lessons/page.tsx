@@ -100,19 +100,19 @@ const renderRow = (item: LessonList) => (
     }
   }
 
-  const [data, count] = await prisma.$transaction([
-    prisma.lesson.findMany({
-      where: query,
-      include: {
-        subject: { select: { name: true } },
-        class: { select: { name: true } },
-        teacher: { select: { name: true, surname: true } },
-      },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
-    prisma.lesson.count({ where: query }),
-  ]);
+    const [data, count] = await Promise.all([
+      prisma.lesson.findMany({
+        where: query,
+        include: {
+          subject: { select: { name: true } },
+          class: { select: { name: true } },
+          teacher: { select: { name: true, surname: true } },
+        },
+        take: ITEM_PER_PAGE,
+        skip: ITEM_PER_PAGE * (p - 1),
+      }),
+      prisma.lesson.count({ where: query }),
+    ]);
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

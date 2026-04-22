@@ -143,7 +143,7 @@ const renderRow = (item: ExamList) => (
       break;
   }
 
-  const [data, count] = await prisma.$transaction([
+    const [data, count] = await Promise.all([
     prisma.exam.findMany({
       where: query,
       include: {

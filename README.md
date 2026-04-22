@@ -3,6 +3,7 @@
 ## Getting Started
 
 Create a `.env` file (see `.env.example`) and set `DATABASE_URL` and `AUTH_SECRET`.
+If you use Neon pooled connections, also set `DIRECT_URL` to Neon’s “Direct connection” string (recommended for `prisma migrate`).
 
 If you run the Prisma seed (`prisma/seed.ts`), the default password for seeded users is `Password123!`.
 

@@ -57,12 +57,12 @@ export default async function SignInPage({
         : null;
 
   return (
-    <div className="h-screen flex items-center justify-center bg-lamaSkyLight">
+    <div className="h-screen flex items-center justify-center bg-mireSkyLight">
       <div className="bg-white p-12 rounded-md shadow-2xl flex flex-col gap-4 w-[400px]">
         <div className="flex flex-col gap-2">
           <h1 className="text-xl font-bold flex items-center gap-2">
             <Image src="/logo.png" alt="" width={24} height={24} />
-            SchooLama
+            Mire school system
           </h1>
           <h2 className="text-gray-400">Sign in to your account</h2>
         </div>

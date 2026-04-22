@@ -87,7 +87,7 @@ const AttendanceListPage = async ({
       break;
   }
 
-  const [data, count] = await prisma.$transaction([
+  const [data, count] = await Promise.all([
     prisma.attendance.findMany({
       where: query,
       include: {

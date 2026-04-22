@@ -7,7 +7,7 @@ import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 
-import { auth } from "@clerk/nextjs/server";
+import { requireSession } from "@/lib/auth/server";
 
 type ResultList = {
   id: number;
@@ -27,10 +27,9 @@ const ResultListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-
-const { userId, sessionClaims } = auth();
-const role = (sessionClaims?.metadata as { role?: string })?.role;
-const currentUserId = userId;
+  const session = await requireSession();
+  const role = session.role;
+  const currentUserId = session.userId;
 
 
 const columns = [
@@ -135,18 +134,18 @@ const renderRow = (item: ResultList) => (
       break;
     case "teacher":
       query.OR = [
-        { exam: { lesson: { teacherId: currentUserId! } } },
-        { assignment: { lesson: { teacherId: currentUserId! } } },
+        { exam: { lesson: { teacherId: currentUserId } } },
+        { assignment: { lesson: { teacherId: currentUserId } } },
       ];
       break;
 
     case "student":
-      query.studentId = currentUserId!;
+      query.studentId = currentUserId;
       break;
 
     case "parent":
       query.student = {
-        parentId: currentUserId!,
+        parentId: currentUserId,
       };
       break;
     default:

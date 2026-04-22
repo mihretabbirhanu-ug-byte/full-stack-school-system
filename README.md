@@ -2,6 +2,10 @@
 
 ## Getting Started
 
+Create a `.env` file (see `.env.example`) and set `DATABASE_URL` and `AUTH_SECRET`.
+
+If you run the Prisma seed (`prisma/seed.ts`), the default password for seeded users is `Password123!`.
+
 First, run the development server:
 
 ```bash

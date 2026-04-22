@@ -6,9 +6,33 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  admin
+  teacher
+  student
+  parent
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String?  @unique
+  passwordHash String
+  passwordSalt String
+  role         Role
+  createdAt    DateTime @default(now())
+
+  admin   Admin?
+  teacher Teacher?
+  student Student?
+  parent  Parent?
+}
+
 model Admin {
   id       String @id
   username String @unique
+
+  user User @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model Student {
@@ -32,6 +56,8 @@ model Student {
   attendances Attendance[]
   results     Result[]
   birthday    DateTime
+
+  user User @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model Teacher {
@@ -50,6 +76,8 @@ model Teacher {
   lessons   Lesson[]
   classes   Class[]
   birthday  DateTime
+
+  user User @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model Parent {
@@ -62,6 +90,8 @@ model Parent {
   address   String
   createdAt DateTime  @default(now())
   students  Student[]
+
+  user User @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model Grade {

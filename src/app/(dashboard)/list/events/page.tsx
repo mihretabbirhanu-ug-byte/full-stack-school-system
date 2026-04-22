@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Event, Prisma } from "@prisma/client";
 import Image from "next/image";
-import { auth } from "@clerk/nextjs/server";
+import { requireSession } from "@/lib/auth/server";
 
 type EventList = Event & { class: Class };
 
@@ -16,9 +16,9 @@ const EventListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
 
-  const { userId, sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
-  const currentUserId = userId;
+  const session = await requireSession();
+  const role = session.role;
+  const currentUserId = session.userId;
 
   const columns = [
     {
@@ -116,9 +116,9 @@ const EventListPage = async ({
   // ROLE CONDITIONS
 
   const roleConditions = {
-    teacher: { lessons: { some: { teacherId: currentUserId! } } },
-    student: { students: { some: { id: currentUserId! } } },
-    parent: { students: { some: { parentId: currentUserId! } } },
+    teacher: { lessons: { some: { teacherId: currentUserId } } },
+    student: { students: { some: { id: currentUserId } } },
+    parent: { students: { some: { parentId: currentUserId } } },
   };
 
   query.OR = [

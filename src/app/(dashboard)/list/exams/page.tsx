@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Exam, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
-import { auth } from "@clerk/nextjs/server";
+import { requireSession } from "@/lib/auth/server";
 
 type ExamList = Exam & {
   lesson: {
@@ -21,10 +21,9 @@ const ExamListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-
-const { userId, sessionClaims } = auth();
-const role = (sessionClaims?.metadata as { role?: string })?.role;
-const currentUserId = userId;
+  const session = await requireSession();
+  const role = session.role;
+  const currentUserId = session.userId;
 
 
 const columns = [
@@ -119,13 +118,13 @@ const renderRow = (item: ExamList) => (
     case "admin":
       break;
     case "teacher":
-      query.lesson.teacherId = currentUserId!;
+      query.lesson.teacherId = currentUserId;
       break;
     case "student":
       query.lesson.class = {
         students: {
           some: {
-            id: currentUserId!,
+            id: currentUserId,
           },
         },
       };
@@ -134,7 +133,7 @@ const renderRow = (item: ExamList) => (
       query.lesson.class = {
         students: {
           some: {
-            parentId: currentUserId!,
+            parentId: currentUserId,
           },
         },
       };

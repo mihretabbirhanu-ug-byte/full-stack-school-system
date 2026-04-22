@@ -1,12 +1,44 @@
 import { PrismaClient, UserSex, Day } from "@prisma/client";
+import { randomBytes, scryptSync } from "crypto";
 const prisma = new PrismaClient();
 
+function hashPassword(password: string) {
+  const salt = randomBytes(16);
+  const hash = scryptSync(password, salt, 64);
+  return { salt: salt.toString("base64"), hash: hash.toString("base64") };
+}
+
 async function main() {
+  const defaultPassword = "Password123!";
+
   // ADMIN
+  const admin1Password = hashPassword(defaultPassword);
+  await prisma.user.create({
+    data: {
+      id: "admin1",
+      username: "admin1",
+      email: "admin1@example.com",
+      role: "admin",
+      passwordHash: admin1Password.hash,
+      passwordSalt: admin1Password.salt,
+    },
+  });
   await prisma.admin.create({
     data: {
       id: "admin1",
       username: "admin1",
+    },
+  });
+
+  const admin2Password = hashPassword(defaultPassword);
+  await prisma.user.create({
+    data: {
+      id: "admin2",
+      username: "admin2",
+      email: "admin2@example.com",
+      role: "admin",
+      passwordHash: admin2Password.hash,
+      passwordSalt: admin2Password.salt,
     },
   });
   await prisma.admin.create({
@@ -56,6 +88,17 @@ async function main() {
 
   // TEACHER
   for (let i = 1; i <= 15; i++) {
+    const password = hashPassword(defaultPassword);
+    await prisma.user.create({
+      data: {
+        id: `teacher${i}`,
+        username: `teacher${i}`,
+        email: `teacher${i}@example.com`,
+        role: "teacher",
+        passwordHash: password.hash,
+        passwordSalt: password.salt,
+      },
+    });
     await prisma.teacher.create({
       data: {
         id: `teacher${i}`, // Unique ID for the teacher
@@ -98,6 +141,17 @@ async function main() {
 
   // PARENT
   for (let i = 1; i <= 25; i++) {
+    const password = hashPassword(defaultPassword);
+    await prisma.user.create({
+      data: {
+        id: `parentId${i}`,
+        username: `parentId${i}`,
+        email: `parent${i}@example.com`,
+        role: "parent",
+        passwordHash: password.hash,
+        passwordSalt: password.salt,
+      },
+    });
     await prisma.parent.create({
       data: {
         id: `parentId${i}`,
@@ -113,6 +167,17 @@ async function main() {
 
   // STUDENT
   for (let i = 1; i <= 50; i++) {
+    const password = hashPassword(defaultPassword);
+    await prisma.user.create({
+      data: {
+        id: `student${i}`,
+        username: `student${i}`,
+        email: `student${i}@example.com`,
+        role: "student",
+        passwordHash: password.hash,
+        passwordSalt: password.salt,
+      },
+    });
     await prisma.student.create({
       data: {
         id: `student${i}`, 

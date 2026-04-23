@@ -25,8 +25,16 @@ async function main() {
 
   // ADMIN
   const admin1Password = hashPassword(defaultPassword);
-  await prisma.user.create({
-    data: {
+  await prisma.user.upsert({
+    where: { id: "admin1" },
+    update: {
+      username: "admin1",
+      email: "admin1@example.com",
+      role: "admin",
+      passwordHash: admin1Password.hash,
+      passwordSalt: admin1Password.salt,
+    },
+    create: {
       id: "admin1",
       username: "admin1",
       email: "admin1@example.com",
@@ -35,16 +43,23 @@ async function main() {
       passwordSalt: admin1Password.salt,
     },
   });
-  await prisma.admin.create({
-    data: {
-      id: "admin1",
-      username: "admin1",
-    },
+  await prisma.admin.upsert({
+    where: { id: "admin1" },
+    update: { username: "admin1" },
+    create: { id: "admin1", username: "admin1" },
   });
 
   const admin2Password = hashPassword(defaultPassword);
-  await prisma.user.create({
-    data: {
+  await prisma.user.upsert({
+    where: { id: "admin2" },
+    update: {
+      username: "admin2",
+      email: "admin2@example.com",
+      role: "admin",
+      passwordHash: admin2Password.hash,
+      passwordSalt: admin2Password.salt,
+    },
+    create: {
       id: "admin2",
       username: "admin2",
       email: "admin2@example.com",
@@ -53,11 +68,10 @@ async function main() {
       passwordSalt: admin2Password.salt,
     },
   });
-  await prisma.admin.create({
-    data: {
-      id: "admin2",
-      username: "admin2",
-    },
+  await prisma.admin.upsert({
+    where: { id: "admin2" },
+    update: { username: "admin2" },
+    create: { id: "admin2", username: "admin2" },
   });
 
   // GRADE
@@ -101,8 +115,16 @@ async function main() {
   // TEACHER
   for (let i = 1; i <= 15; i++) {
     const password = hashPassword(defaultPassword);
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { id: `teacher${i}` },
+      update: {
+        username: `teacher${i}`,
+        email: `teacher${i}@example.com`,
+        role: "teacher",
+        passwordHash: password.hash,
+        passwordSalt: password.salt,
+      },
+      create: {
         id: `teacher${i}`,
         username: `teacher${i}`,
         email: `teacher${i}@example.com`,
@@ -111,9 +133,9 @@ async function main() {
         passwordSalt: password.salt,
       },
     });
-    await prisma.teacher.create({
-      data: {
-        id: `teacher${i}`, // Unique ID for the teacher
+    await prisma.teacher.upsert({
+      where: { id: `teacher${i}` },
+      update: {
         username: `teacher${i}`,
         name: `TName${i}`,
         surname: `TSurname${i}`,
@@ -122,8 +144,20 @@ async function main() {
         address: `Address${i}`,
         bloodType: "A+",
         sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
-        subjects: { connect: [{ id: (i % 10) + 1 }] }, 
-        classes: { connect: [{ id: (i % 6) + 1 }] }, 
+        birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 30)),
+      },
+      create: {
+        id: `teacher${i}`,
+        username: `teacher${i}`,
+        name: `TName${i}`,
+        surname: `TSurname${i}`,
+        email: `teacher${i}@example.com`,
+        phone: `123-456-789${i}`,
+        address: `Address${i}`,
+        bloodType: "A+",
+        sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
+        subjects: { connect: [{ id: (i % 10) + 1 }] },
+        classes: { connect: [{ id: (i % 6) + 1 }] },
         birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 30)),
       },
     });
@@ -154,8 +188,16 @@ async function main() {
   // PARENT
   for (let i = 1; i <= 25; i++) {
     const password = hashPassword(defaultPassword);
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { id: `parentId${i}` },
+      update: {
+        username: `parentId${i}`,
+        email: `parent${i}@example.com`,
+        role: "parent",
+        passwordHash: password.hash,
+        passwordSalt: password.salt,
+      },
+      create: {
         id: `parentId${i}`,
         username: `parentId${i}`,
         email: `parent${i}@example.com`,
@@ -164,8 +206,17 @@ async function main() {
         passwordSalt: password.salt,
       },
     });
-    await prisma.parent.create({
-      data: {
+    await prisma.parent.upsert({
+      where: { id: `parentId${i}` },
+      update: {
+        username: `parentId${i}`,
+        name: `PName ${i}`,
+        surname: `PSurname ${i}`,
+        email: `parent${i}@example.com`,
+        phone: `123-456-789${i}`,
+        address: `Address${i}`,
+      },
+      create: {
         id: `parentId${i}`,
         username: `parentId${i}`,
         name: `PName ${i}`,
@@ -180,8 +231,16 @@ async function main() {
   // STUDENT
   for (let i = 1; i <= 50; i++) {
     const password = hashPassword(defaultPassword);
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { id: `student${i}` },
+      update: {
+        username: `student${i}`,
+        email: `student${i}@example.com`,
+        role: "student",
+        passwordHash: password.hash,
+        passwordSalt: password.salt,
+      },
+      create: {
         id: `student${i}`,
         username: `student${i}`,
         email: `student${i}@example.com`,
@@ -190,10 +249,10 @@ async function main() {
         passwordSalt: password.salt,
       },
     });
-    await prisma.student.create({
-      data: {
-        id: `student${i}`, 
-        username: `student${i}`, 
+    await prisma.student.upsert({
+      where: { id: `student${i}` },
+      update: {
+        username: `student${i}`,
         name: `SName${i}`,
         surname: `SSurname ${i}`,
         email: `student${i}@example.com`,
@@ -201,9 +260,24 @@ async function main() {
         address: `Address${i}`,
         bloodType: "O-",
         sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
-        parentId: `parentId${Math.ceil(i / 2) % 25 || 25}`, 
-        gradeId: (i % 6) + 1, 
-        classId: (i % 6) + 1, 
+        parentId: `parentId${Math.ceil(i / 2) % 25 || 25}`,
+        gradeId: (i % 6) + 1,
+        classId: (i % 6) + 1,
+        birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 10)),
+      },
+      create: {
+        id: `student${i}`,
+        username: `student${i}`,
+        name: `SName${i}`,
+        surname: `SSurname ${i}`,
+        email: `student${i}@example.com`,
+        phone: `987-654-321${i}`,
+        address: `Address${i}`,
+        bloodType: "O-",
+        sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
+        parentId: `parentId${Math.ceil(i / 2) % 25 || 25}`,
+        gradeId: (i % 6) + 1,
+        classId: (i % 6) + 1,
         birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 10)),
       },
     });
